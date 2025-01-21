@@ -14,6 +14,7 @@ Calculator::Calculator(QWidget* parent) : QWidget(parent), isOperationClicked(fa
 
     setLayout(layout); // Устанавливаем сетку с кнопками для окна калькулятора
     setWindowTitle("Qt Calculator");
+    setWindowIcon(QIcon("CalculatorIcon.png"));
     setMinimumSize(300, 400);
 }
 
@@ -22,7 +23,8 @@ void Calculator::createButtons(QGridLayout* layout) {
         "7", "8", "9", "/",
         "4", "5", "6", "*",
         "1", "2", "3", "-",
-        "0", "C", "=", "+",
+        "0", ".", "C", "+",
+        "="
     };
 
     for (int i = 0; i < buttonLables.size(); ++i) {
@@ -51,12 +53,20 @@ void Calculator::onDigitClicked() {
     QPushButton* button = qobject_cast<QPushButton*>(sender());
     QString digit = button->text();
 
-    // Если в поле ввода 0 или была выбрана операция (+, -, *, /)
-    if (display->text() == "0" || isOperationClicked) {
-        display->setText(digit); // Сбрасываем текст
-        isOperationClicked = false;
-    } else {    // Если в поле уже есть цифры или не нажата кнопка операции
-        display->setText(display->text() + digit); // Добавляем цифру к текущему тексту
+    // Если нажата кнопка "."
+    if (digit == ".") {
+        // Проверяем, есть ли уже точка в текущем числе
+        if (!display->text().contains(".")) {
+            display->setText(display->text() + ".");
+        }
+    } else {    // Если нажата цифра
+        // Если в поле ввода 0 или была выбрана операция (+, -, *, /)
+        if (display->text() == "0" || isOperationClicked) {
+            display->setText(digit); // Сбрасываем текст
+            isOperationClicked = false;
+        } else {    // Если в поле уже есть цифры или не нажата кнопка операции
+            display->setText(display->text() + digit); // Добавляем цифру к текущему тексту
+        }
     }
 }
 
