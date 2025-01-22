@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QMessageBox>
+#include <cmath>
 
 class Calculator : public QWidget
 {
@@ -19,6 +20,9 @@ private slots:
     void onOperationClicked();
     void onEqualsClicked();
     void onClearClicked();
+    void onSquareRootClicked();
+    void onSquareClicked();
+    void onBackspaceClicked();
 
 private:
     QLineEdit* display;

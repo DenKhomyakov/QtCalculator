@@ -20,11 +20,11 @@ Calculator::Calculator(QWidget* parent) : QWidget(parent), isOperationClicked(fa
 
 void Calculator::createButtons(QGridLayout* layout) {
     const QStringList buttonLables = {
+        "√", "x²", "C", "⌫",
         "7", "8", "9", "/",
         "4", "5", "6", "*",
         "1", "2", "3", "-",
-        "0", ".", "C", "+",
-        "="
+        "0", ".", "=", "+"
     };
 
     for (int i = 0; i < buttonLables.size(); ++i) {
@@ -38,6 +38,12 @@ void Calculator::createButtons(QGridLayout* layout) {
             } else if (button->text() == "+" || button->text() == "-" ||
                        button->text() == "*" || button->text() == "/") {
                 onOperationClicked();
+            } else if (button->text() == "√") {
+                onSquareRootClicked();
+            } else if (button->text() == "x²") {
+                onSquareClicked();
+            } else if (button->text() == "⌫") {
+                onBackspaceClicked();
             } else {
                 onDigitClicked();
             }
@@ -58,6 +64,17 @@ void Calculator::onDigitClicked() {
         // Проверяем, есть ли уже точка в текущем числе
         if (!display->text().contains(".")) {
             display->setText(display->text() + ".");
+        }
+    } else if (digit == "-") {  // Если нажата кнопка "-"
+        QString currentText = display->text();
+
+        // Если текст пуст или равено нулю, то добавляем минус
+        if (currentText == "0" || currentText.isEmpty()) {
+            display->setText("-");
+        } else if (currentText.startsWith("-")) {    // Если минус уже есть, то удаляем его
+            display->setText(currentText.mid(1));   // Убираем первый символ (минус)
+        } else {    // Если минуса нет, добавляем его
+            display->setText("-" + currentText);
         }
     } else {    // Если нажата цифра
         // Если в поле ввода 0 или была выбрана операция (+, -, *, /)
@@ -104,4 +121,32 @@ void Calculator::onClearClicked() {
     firstOperand = 0;
     currentOperation = "";
     isOperationClicked = false;
+}
+
+void Calculator::onSquareRootClicked() {
+    double number = display->text().toDouble();
+    if (number < 0) {
+        QMessageBox::warning(this, "Error", "Square root of a negative number is not defined");
+        return;
+    }
+
+    double result = std::sqrt(number);
+    display->setText(QString::number(result));
+}
+
+void Calculator::onSquareClicked() {
+    double number = display->text().toDouble();
+    double result = std::pow(number, 2);
+    display->setText(QString::number(result));
+}
+
+void Calculator::onBackspaceClicked() {
+    QString text = display->text();
+    if (text.length() > 1) {
+        text.chop(1);   // Удаляем последний символ
+    } else {
+        text = "0"; // Если строка пустая, то устанавливаем ноль
+    }
+
+    display->setText(text);
 }
